@@ -9,7 +9,7 @@ async function auth(email) {
       host: 'localhost', // Endereço do servidor MySQL
       user: 'root', // Nome de usuário do MySQL
       password: 'clbclb10', // Senha do usuário do MySQL
-      database: 'sospets' // Nome do banco de dados MySQL
+      database: 'projeto how vi' // Nome do banco de dados MySQL
     });
 
     // Execute a consulta SQL

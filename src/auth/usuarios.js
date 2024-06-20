@@ -10,7 +10,7 @@ async function insertUsuarios(nome, email, celular, estado, cidade, senha) {
       host: 'localhost', // Endereço do servidor MySQL
       user: 'root', // Nome de usuário do MySQL
       password: 'clbclb10', // Senha do usuário do MySQL
-      database: 'sospets' // Nome do banco de dados MySQL
+      database: 'projeto how vi' // Nome do banco de dados MySQL
     });
 
     const senhaHash = bcrypt.hashSync(senha, 10);

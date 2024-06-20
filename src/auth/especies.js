@@ -1,6 +1,6 @@
 const mysql = require('mysql2/promise');
 
-async function getAnimais() {
+async function getEspecies() {
   let connection;
 
   try {
@@ -14,9 +14,7 @@ async function getAnimais() {
 
     // Execute a consulta SQL com os valores dos parâmetros
     const [result] = await connection.execute(`
-      select animais.*, especies.nome especie, especies.habitat_natural habitat, especies.expectativa_vida expectativa 
-      from animais
-      left join especies on animais.idespecie = especies.idespecie;
+      select * from especies;
     `);
 
     await connection.commit();
@@ -37,7 +35,7 @@ async function getAnimais() {
 }
 
 
-async function insertAnimais(especie, nome, porte, observacoes, nomefoto) {
+async function insertEspecies(nome, habitat_natural, expectativa_vida, idespecie) {
   let connection;
   
   try {
@@ -50,12 +48,12 @@ async function insertAnimais(especie, nome, porte, observacoes, nomefoto) {
     });
   
     // Crie um array com os valores dos parâmetros
-    const values = [especie, nome, porte, observacoes, nomefoto];
-
-    // Execute a consulta SQL com os valores dos parâetros
+    const values = [nome, habitat_natural, expectativa_vida];
+  
+    // Execute a consulta SQL com os valores dos parâmetros
     const [result] = await connection.execute(`
-      INSERT INTO animais (idespecie, nome, porte, observacoes, nomefoto) 
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO Especies (nome, habitat_natural, expectativa_vida) 
+      VALUES (?, ?, ?)
     `, values);
   
     await connection.commit();
@@ -65,7 +63,6 @@ async function insertAnimais(especie, nome, porte, observacoes, nomefoto) {
   } catch (err) {
     console.error(err);
   } finally {
-
     if (connection) {
       try {
         await connection.close();
@@ -77,4 +74,4 @@ async function insertAnimais(especie, nome, porte, observacoes, nomefoto) {
 }
 
 
-module.exports = { getAnimais, insertAnimais };
+module.exports = { getEspecies, insertEspecies };

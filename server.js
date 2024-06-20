@@ -30,7 +30,8 @@ app.use(bodyParser.json());
 
 const { insertUsuarios } = require('./src/auth/usuarios.js')
 const { getAnimais, insertAnimais } = require('./src/auth/animais.js')
-const { insertResgate } = require('./src/auth/resgate.js')
+
+const { getEspecies, insertEspecies } = require('./src/auth/especies.js')
 
 app.use(cors());
 
@@ -79,17 +80,36 @@ app.get('/usuario', verifyToken, async (req, res) => {
 });
 
 app.get('/animais', async (req, res) => {
-
   async function buscaAnimais(){
     const animais = await getAnimais();
     return animais;
   }
-
   const animais = await buscaAnimais();
-  
-  //const animaisJson = JSON.stringify(animais.rows);
   res.send(animais);
-
+});
+app.post('/cadastroAnimais', verifyToken, upload.single('file'), async (req, res) => {
+  const { especie, nome, porte, observacoes, foto: fotobody } = req.body; 
+  const foto = req.file;
+  const nomeArquivo = foto.filename;
+  upload.single(foto)
+  let result
+  result = await insertAnimais(especie, nome, porte, observacoes, nomeArquivo)
+  res.send(result);
+});
+app.get('/especies', async (req, res) => {
+  async function buscaEspecies(){
+    const especies = await getEspecies();
+    return especies;
+  }
+  const especies = await buscaEspecies();
+  res.send(especies);
+});
+app.post('/cadastroEspecies', verifyToken, upload.single('file'), async (req, res) => {
+  console.log(req.body)
+  const { nome, habitat_natural, expectativa_vida } = req.body; 
+  let result
+  result = await insertEspecies(nome, habitat_natural, expectativa_vida)
+  res.send(result);
 });
 
 
@@ -101,35 +121,6 @@ app.get('/usuariosSave', async (req, res) => {
   result = await insertUsuarios(nome, email, celular, estado, cidade, senha)
   res.send(result);
 }); 
-
-app.post('/doe', verifyToken, upload.single('file'), async (req, res) => {
-  const { tipo, nome, raca, porte, sexo, castrado, vacinado, idade, observacoes, coddoador, foto: fotobody } = req.body;
-  
-  const foto = req.file;
-  const nomeArquivo = foto.filename;
-
-  //console.log(`${tipo} - ${nome} - ${raca} - ${porte} - ${sexo} - ${castrado} - ${vacinado} - ${idade} - ${observacoes} - ${coddoador}`);
-  
-  upload.single(foto)
-
-  let result
-  result = await insertAnimais(tipo, nome, raca, porte, sexo, castrado, vacinado, idade, observacoes, coddoador, nomeArquivo)
-
-  res.send(result);
-});
-
-
-app.post('/resgate', verifyToken, async (req, res) => {
-  const { tipo, caracteristicas, motivo, estado, cidade, rua, ponto_referencia, urgencia, codusuario } = req.body;
-
-  let result
-  result = await insertResgate(tipo, caracteristicas, motivo, estado, cidade, rua, ponto_referencia, urgencia, codusuario)
-
-  res.send(result);
-});
-
-
-
 
 app.use('/imagens/animais', express.static(path.join(__dirname, 'arquivos', 'imagens', 'animais')));
 
